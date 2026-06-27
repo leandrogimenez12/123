@@ -1,109 +1,82 @@
-namespace WinFormsApp7
+using System;
+using System.Windows.Forms;
+
+namespace TuNombreDeProyecto 
 {
-    public partial class Form1 : Form
+    public partial class frmLogin : Form
     {
-        public Form1()
+        public frmLogin()
         {
             InitializeComponent();
+            
+            // La contraseña no debe mostrarse en texto plano por defecto.
+            // Alternamos la propiedad PasswordChar con el caracter '•' [3].
+            txtContrasena.PasswordChar = '•';
+        }
+
+        // Validaciones completas sobre todos los campos antes de procesar cualquier operación [1].
+        private bool ValidarCamposLogin()
+        {
+            // Validamos que el nombre de usuario y contraseña no estén vacíos antes de consultar los datos [3].
+            if (txtUsuario.Text == "" || txtContrasena.Text == "")
+            {
+                lblError.Text = "El nombre de usuario y la contraseña no pueden estar vacíos.";
+                lblError.Visible = true;
+                return false;
+            }
+            return true;
         }
 
         private void btnIngresar_Click(object sender, EventArgs e)
         {
+            lblError.Visible = false;
 
+            // Ejecutamos la validación antes de consultar [3].
+            if (ValidarCamposLogin() == true)
+            {
+                // Si los datos son correctos y no es primer ingreso, redirige al menú [4].
+                if (txtUsuario.Text == "admin001" && txtContrasena.Text == "password123")
+                {
+                    frmPrincipalAdmin formAdmin = new frmPrincipalAdmin();
+                    formAdmin.Show();
+                    this.Hide(); 
+                }
+                // Si los datos son correctos y el usuario tiene activo el flag de primer ingreso,
+                // el sistema redirige automáticamente a frmCambioContrasena [4].
+                else if (txtUsuario.Text == "msosa456" && txtContrasena.Text == "temporal123")
+                {
+                    frmCambioContrasena formCambio = new frmCambioContrasena();
+                    formCambio.Show();
+                    this.Hide();
+                }
+                else
+                {
+                    // Si los datos son incorrectos, se muestra un mensaje de error claro y el formulario permanece abierto [5].
+                    lblError.Text = "Usuario o contraseña incorrectos.";
+                    lblError.Visible = true;
+                }
+            }
         }
 
         private void btnMostrarClave_Click(object sender, EventArgs e)
         {
-
+            // Para mostrar/ocultar la contraseña, alternamos la propiedad PasswordChar del TextBox entre '•' y '\0' (caracter nulo) [3].
+            if (txtContrasena.PasswordChar == '•')
+            {
+                txtContrasena.PasswordChar = '\0';
+            }
+            else
+            {
+                txtContrasena.PasswordChar = '•';
+            }
         }
 
         private void linkRecuperarClave_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            namespace EscuelaDeManejo // Si tu proyecto se llama distinto, dejá el que ya te viene por defecto
-    {
-        public partial class frmLogin : Form
-        {
-            public frmLogin()
-            {
-                InitializeComponent();
-
-                // Aseguramos que la contraseña esté oculta al iniciar el formulario
-                // cumpliendo el requisito estricto de usar el punto ('•').
-                txtContrasena.PasswordChar = '•';
-            }
-
-            // Método para validar campos vacíos (Suma a la calidad del código)
-            private bool ValidarCamposLogin()
-            {
-                // El requisito exige validar que los campos no estén vacíos.
-                if (txtUsuario.Text == "" || txtContrasena.Text == "")
-                {
-                    // Mostramos un mensaje claro en el label de estado.
-                    lblError.Text = "El nombre de usuario y la contraseña no pueden estar vacíos.";
-                    lblError.Visible = true;
-                    return false;
-                }
-                return true;
-            }
-
-            // Evento que se ejecuta al hacer clic en el botón "Iniciar sesión".
-            private void btnIngresar_Click(object sender, EventArgs e)
-            {
-                // Ocultamos el mensaje de error por si estaba visible de un intento anterior fallido
-                lblError.Visible = false;
-
-                // 1. Validamos que los campos estén completos ANTES de intentar el inicio de sesión.
-                if (ValidarCamposLogin() == true)
-                {
-                    // 2. Verificamos al Administrador / Director (que ya no es primer ingreso).
-                    if (txtUsuario.Text == "admin001" && txtContrasena.Text == "password123")
-                    {
-                        // Redirige al menú principal del Administrador.
-                        frmPrincipalAdmin formAdmin = new frmPrincipalAdmin();
-                        formAdmin.Show();
-                        this.Hide();
-                    }
-                    // 3. Verificamos a la Usuaria General (Alumna particular de prueba).
-                    else if (txtUsuario.Text == "msosa456" && txtContrasena.Text == "temporal123")
-                    {
-                        // Como tiene activo el flag de primer ingreso, el sistema redirige automáticamente a frmCambioContrasena.
-                        frmCambioContrasena formCambio = new frmCambioContrasena();
-                        formCambio.Show();
-                        this.Hide();
-                    }
-                    else
-                    {
-                        // 4. Datos incorrectos: se muestra un error claro y el formulario permanece abierto.
-                        lblError.Text = "Usuario o contraseña incorrectos.";
-                        lblError.Visible = true;
-                    }
-                }
-            }
-
-            // Evento que se ejecuta al hacer clic en el botón para mostrar/ocultar contraseña.
-            private void btnMostrarClave_Click(object sender, EventArgs e)
-            {
-                // Requisito obligatorio: alternar la propiedad PasswordChar entre '•' y '\0' (caracter nulo).
-                if (txtContrasena.PasswordChar == '•')
-                {
-                    txtContrasena.PasswordChar = '\0';
-                }
-                else
-                {
-                    txtContrasena.PasswordChar = '•';
-                }
-            }
-
-            // Evento que se ejecuta al hacer clic en el texto "¿Olvidaste tu contraseña?".
-            private void linkRecuperarClave_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-            {
-                // Abre el flujo de recuperación de contraseña (frmRecuperarContrasena).
-                frmRecuperarContrasena formRecuperar = new frmRecuperarContrasena();
-                formRecuperar.Show();
-                this.Hide();
-            }
+            // El enlace abre el formulario frmRecuperarContrasena [5].
+            frmRecuperarContrasena formRecuperar = new frmRecuperarContrasena();
+            formRecuperar.Show();
+            this.Hide(); 
         }
-    }
-}
     }
 }
